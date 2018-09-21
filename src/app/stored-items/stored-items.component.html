@@ -1,0 +1,65 @@
+<div class="mb-2">
+  <h2 class="d-inline">Items in the Fridge</h2>
+  <a class="align-center ml-3" href="javascript:;" (click)="addItemBack({}, itemsContent, true)">Add New Item</a>
+  <a class="align-center ml-3" href="javascript:;" (click)="remove_item_from_inventory = !remove_item_from_inventory">Remove item from inventory</a>
+</div>
+<div class="alert alert-danger" *ngIf="all_fields_not_filled">
+  <h4 class="error">Please fill all fields</h4>
+</div>
+<div class="alert alert-danger" *ngIf="not_a_unique_uuid">
+  <h4 class="error">Please enter unique uuid</h4>
+  <span class="error">Unavailable UUIDs:</span><span class="error ml-2" *ngFor="let uuid of unavailable_uuids;let last_id = last">{{ uuid }}{{last_id ? "" : ", "}}</span>
+</div>
+<div class="alert alert-danger" *ngIf="not_a_valid_fill_factor">
+  <h4 class="error">Please add valid Fill Rate between 0 to 100</h4>
+</div>
+<ng-container *ngFor="let item of fridge_items">
+  <div class="row mb-2 ml-2">
+    <button type="button" class="btn btn-primary btn-lg btn-block col-sm-7" (click)="handleItemRemoved(item)">{{item.name | titlecase }}</button>
+    <fa *ngIf="remove_item_from_inventory" name="trash" class="mx-2 mt-2" (click)=forgetItem(item)></fa>
+    <h6 class="ml-2 mt-2" *ngIf="item.fillFactor < 0.5">This item is running low at: {{ item.fillFactor*100 }}%</h6>
+  </div>
+</ng-container>
+
+<br/>
+<br/>
+
+<section *ngIf="items_currently_out.length > 0">
+  <h2>Put items back in the fridge</h2>
+  <div class="alert alert-danger" *ngIf="item_did_not_add">
+    <h4 class="error">Please add valid Fill Rate between 0 to 100</h4>
+  </div>
+  <ng-container *ngFor="let item of items_currently_out">
+    <div class="row mb-2 ml-2">
+      <button type="button" class="btn btn-primary btn-lg btn-block col-sm-7" (click)="addItemBack(item, itemsContent)">{{item.name | titlecase }}</button>
+    </div>
+  </ng-container>
+</section>
+
+<ng-template #itemsContent let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Please fill the item being added</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body row" *ngIf="is_new_item">
+    <h3 class="d-inline col-sm-12 col-md-6 mb-sm-2 mb-md-0">Item Type: </h3>
+    <input class="mb-sm-0 mb-md-2 col-sm-10 col-md-4 end" type="text" placeholder="Item Type" [(ngModel)]="new_item_type"><br/>
+    <h3 class="d-inline col-sm-12 col-md-6 mb-sm-2 mb-md-0">Item Name: </h3>
+    <input class="mb-sm-0 mb-md-2 col-sm-10 col-md-4 end"  placeholder="Item Name" type="text" [(ngModel)]="new_item_name"><br/>
+    <h3 class="d-inline col-sm-12 col-md-6 mb-sm-2 mb-md-0">Item UUID: </h3>
+    <input class="mb-sm-0 mb-md-2 col-sm-10 col-md-4 end" type="text"  placeholder="Unique ID" [(ngModel)]="new_item_uuid"><br/>
+    <h3 class="d-inline col-sm-12 col-md-6 mb-sm-2 mb-md-0">Percentage Left: </h3>
+    <input class="mb-sm-0 mb-md-2 col-sm-10 col-md-4 end" type="number" min="0" max="100" placeholder="Fill Rate 0 - 100" [(ngModel)]="new_item_fillFactor">
+  </div>
+  <div class="modal-body" *ngIf="!is_new_item">
+    <h3 class="d-inline">Item Type: </h3><h5 class="d-inline">{{ returned_item.itemType | titlecase}}</h5><br/>
+    <h3 class="d-inline">Item Name: </h3><h5 class="d-inline">{{ returned_item.name | titlecase }}</h5><br/>
+    <h3 class="d-inline">Item UUID: </h3><h5 class="d-inline">{{ returned_item.itemUUID }}</h5><br/>
+    <h3 class="d-inline">Percentage Left: </h3><input type="number" min="0" max="100" [(ngModel)]="added_item_fillrate">
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="c('Save click')">Save</button>
+  </div>
+</ng-template>

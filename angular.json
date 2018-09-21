@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/smart-fridge",
+            "outputPath": "dist/",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -27,8 +27,14 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/global-styles/styles.scss",
+              "./node_modules/font-awesome/scss/font-awesome.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/global-styles"
+              ]
+            },
             "scripts": []
           },
           "configurations": {
